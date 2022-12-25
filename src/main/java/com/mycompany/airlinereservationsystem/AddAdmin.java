@@ -4,6 +4,17 @@
  */
 package com.mycompany.airlinereservationsystem;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Md Rizwan
@@ -13,10 +24,63 @@ public class AddAdmin extends javax.swing.JInternalFrame {
     /**
      * Creates new form AddAdmin
      */
+    String driverClassName ="com.mysql.cj.jdbc.Driver";
+    String URL = "jdbc:mysql://localhost:3306/airlinesystem";
+    String root = "root";
+    String password = "System123";
     public AddAdmin() {
         initComponents();
+        autoId();
     }
-
+    Connection con;
+    PreparedStatement pre;
+     public void autoId(){
+        try {
+            try {
+                Class.forName(driverClassName);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            con = DriverManager.getConnection(URL,root,password);
+            java.sql.Statement s = con.createStatement();
+            String query = "Select MAX(UserId) from admin";
+            ResultSet rs =  s.executeQuery(query);
+            rs.next();
+            String amdinId = rs.getString("MAX(UserId)");
+            if(amdinId ==  null){
+                txt_adminId.setText("ADM001");
+            }else{
+                long id = Long.parseLong(amdinId.substring(3, amdinId.length()));
+                id++;
+                txt_adminId.setText("ADM"+String.format("%03d", id));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     public void db_connection(){
+        try {
+            try {
+                Class.forName(driverClassName);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            con=DriverManager.getConnection(URL,root,password);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+      public void resetFields() {
+        txt_fname.setText("");
+        txt_lname.setText("");
+        txt_username.setText("");
+        txt_password.setText("");
+        txt_phoneno.setText("");
+        admin_dob.setDate(null);
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,6 +105,8 @@ public class AddAdmin extends javax.swing.JInternalFrame {
         txt_password = new javax.swing.JTextField();
         btn_cancel = new javax.swing.JButton();
         btn_add_admin = new javax.swing.JButton();
+        lbl_fname2 = new javax.swing.JLabel();
+        txt_adminId = new javax.swing.JTextField();
 
         setClosable(true);
         setTitle("Add Admin Panel");
@@ -95,61 +161,77 @@ public class AddAdmin extends javax.swing.JInternalFrame {
             }
         });
 
+        lbl_fname2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lbl_fname2.setText("Admin ID");
+
+        txt_adminId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_adminIdActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(153, 153, 153)
-                .addComponent(lbl_fname1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(labl_lname1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                        .addComponent(txt_password, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(148, 148, 148))))
+                .addGap(386, 386, 386)
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
+                .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lbl_fname2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt_adminId, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lbl_fname1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(labl_lname1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt_password, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(lbl_dob, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbl_phoneno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lbl_fname, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(labl_lname, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(23, 23, 23)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(admin_dob, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_lname, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_phoneno)
-                    .addComponent(txt_fname, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_add_admin)
-                .addGap(35, 35, 35)
-                .addComponent(btn_cancel)
-                .addGap(274, 274, 274))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lbl_dob, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbl_phoneno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lbl_fname, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(labl_lname, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(23, 23, 23)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(admin_dob, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txt_lname, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txt_phoneno)
+                                .addComponent(txt_fname, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(181, 181, 181))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_add_admin)
+                            .addGap(35, 35, 35)
+                            .addComponent(btn_cancel))))
+                .addGap(0, 273, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(5, 5, 5)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_adminId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_fname2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(labl_lname1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txt_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lbl_fname1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                        .addComponent(txt_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbl_fname1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_fname, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_fname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -169,7 +251,7 @@ public class AddAdmin extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_add_admin)
                     .addComponent(btn_cancel))
-                .addGap(0, 173, Short.MAX_VALUE))
+                .addContainerGap(127, Short.MAX_VALUE))
         );
 
         pack();
@@ -190,7 +272,53 @@ public class AddAdmin extends javax.swing.JInternalFrame {
 
     private void btn_add_adminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_adminActionPerformed
         // TODO add your handling code here:
+        
+        try {
+            // TODO add your handling code here:
+            db_connection();
+            String UserId = txt_adminId.getText();
+            String FirstName = txt_fname.getText();
+            String LastName = txt_lname.getText();
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            String Date = dt.format(admin_dob.getDate());
+            String UserName = txt_username.getText();
+            String Password = txt_password.getText();
+            String PhoneNo = txt_phoneno.getText();
+            
+            con=DriverManager.getConnection(URL,root,password);
+            String insert  ="Insert into admin(UserId,FirstName,LastName,Dob,PhoneNo,UserName,Password)values(?,?,?,?,?,?,?)";
+            pre = con.prepareStatement(insert);
+            pre.setString(1, UserId);
+            pre.setString(2, FirstName);
+            pre.setString(3, LastName);
+            pre.setString(4, Date);
+            pre.setString(5, PhoneNo);
+            pre.setString(6, UserName);
+            pre.setString(7,Password);
+            
+            pre.executeUpdate();
+            JOptionPane.showMessageDialog(null, "New Admin Addedd Successfully!");
+            resetFields();
+            autoId();
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+                    } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_add_adminActionPerformed
+
+    private void txt_adminIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_adminIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_adminIdActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -203,7 +331,9 @@ public class AddAdmin extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lbl_dob;
     private javax.swing.JLabel lbl_fname;
     private javax.swing.JLabel lbl_fname1;
+    private javax.swing.JLabel lbl_fname2;
     private javax.swing.JLabel lbl_phoneno;
+    private javax.swing.JTextField txt_adminId;
     private javax.swing.JTextField txt_fname;
     private javax.swing.JTextField txt_lname;
     private javax.swing.JTextField txt_password;
