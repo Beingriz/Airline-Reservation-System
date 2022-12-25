@@ -14,6 +14,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,38 +26,56 @@ public final class AddCustomer extends javax.swing.JInternalFrame {
     /**
      * Creates new form AddCustomer
      */
+    String driverClassName = "com.mysql.cj.jdbc.Driver";
+    String URL = "jdbc:mysql://localhost:3306/airlinesystem";
+    String root = "root";
+    String password = "System123";
+    ButtonGroup gender = new ButtonGroup();
     public AddCustomer() {
         initComponents();
         autoId();
+        gender.add(rd_male);
+            gender.add(rd_female);
     }
     Connection con;
     PreparedStatement pre;
     
     public void autoId(){
+       resetFields();
         try{
             try{
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName(driverClassName);
             }catch (ClassNotFoundException ex){
                 Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE,null,ex);
             }
-        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/airlinesystem","root","System123" );
+        con = DriverManager.getConnection(URL,root,password );
         java.sql.Statement s =  con.createStatement();
-        ResultSet rs = s.executeQuery("Select MAX(customerId) from customer");
+        String query = "Select Max(CustomerId) from customer";
+        ResultSet rs = s.executeQuery(query);
         rs.next();
         if(rs.getString("MAX(CustomerId)")==null){
             txt_customerid.setText("CS001") ;
         }else{
-            long id = Long.parseLong(rs.getString("MAX(CustomerId)").substring(2, rs.getString("MAX(CustomerId)").length()));
+            String CustId = rs.getString("MAX(CustomerId)");
+            long id = Long.parseLong(CustId.substring(2, CustId.length()));
             id++;
             txt_customerid.setText("CS"+String.format("%03d",id));
         }
         }catch (SQLException ex){
             Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE,null,ex);
 
-        }
-       
-                 
-                
+        }                     
+    }
+    public void resetFields(){
+        txt_fname.setText("");
+        txt_lname.setText("");
+        txt_passportno.setText("");
+        dob.setDate(null);
+        gender.clearSelection();
+        rd_female.setSelected(false);
+        txt_phoneno.setText("");
+        txt_address.setText("");
+        txt_nicid.setText("");
     }
 
     /**
@@ -111,6 +131,8 @@ public final class AddCustomer extends javax.swing.JInternalFrame {
         setMaximizable(true);
         setTitle("Add Customer");
         setToolTipText("");
+        setAlignmentX(200.0F);
+        setAlignmentY(20.0F);
         setPreferredSize(new java.awt.Dimension(850, 500));
 
         lbl_custid.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -322,39 +344,53 @@ public final class AddCustomer extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btn_cancel1ActionPerformed
 
     private void btn_add_customerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_customerActionPerformed
-        // TODO add your handling code here
-        String FirstName = txt_fname.getText();
-        String LastName = txt_lname.getText();
-        String PassportNo = txt_passportno.getText();
-        String NicNo = txt_nicid.getText();
-        
-        // Storing Date in SQL Date Type
-        Date Dob = (Date) dob.getDate();
-        DateFormat dt = new SimpleDateFormat("yyyy-MM-dd"); 
-        String dob = dt.format(Dob); // Converting date into string.
-        
-        String PhoneNo = txt_phoneno.getText();
-        String Address = txt_address.getText();
-        String Gender = "";
-        if(rd_male.isSelected()){
-            Gender = "Male";
-        }else{
-            Gender = "Female";
-        }
-        String CustomerId = txt_customerid.getText();
-       
-        //Creating Connectio to the Database.
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException ex) {
+        try {                                                 
+            // TODO add your handling code here
+            String FirstName = txt_fname.getText();
+            String LastName = txt_lname.getText();
+            String PassportNo = txt_passportno.getText();
+            String NicNo = txt_nicid.getText();
+            
+           
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            String Dob = dt.format(dob.getDate()); // Converting date into string.
+            
+            String PhoneNo = txt_phoneno.getText();
+            String Address = txt_address.getText();
+            
+            String Gender = "";
+            if(rd_male.isSelected()){
+                Gender = "Male";
+            }else{
+                Gender = "Female";
+            }
+            String CustomerId = txt_customerid.getText();
+            
+            //Creating Connectio to the Database.
+            
+            Class.forName(driverClassName);
+            
+            con = DriverManager.getConnection(URL,root,password );
+            String insert = "Insert into customer(CustomerId,FirstName,LastName,PassportId,Dob,Gender,PhoneNo,Address,NICId) values (?,?,?,?,?,?,?,?,?)";
+            pre =con.prepareStatement(insert); 
+            pre.setString(1, CustomerId);
+            pre.setString(2, FirstName);
+            pre.setString(3, LastName);
+            pre.setString(4, PassportNo);
+            pre.setString(5, Dob);
+            pre.setString(6, Gender); 
+            pre.setString(7, PhoneNo);
+            pre.setString(8, Address);
+            pre.setString(9, NicNo);
+            pre.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Customer Addedd Successfully!");
+            resetFields();
+            autoId();
+           
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/airlinesystem","root","System123" );
-        } catch (SQLException ex) {
-            Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        
     }//GEN-LAST:event_btn_add_customerActionPerformed
 
 
