@@ -4,6 +4,17 @@
  */
 package com.mycompany.airlinereservationsystem;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Md Rizwan
@@ -13,8 +24,54 @@ public class AddFlight extends javax.swing.JInternalFrame {
     /**
      * Creates new form AddFlight
      */
+    String driverClassName ="com.mysql.cj.jdbc.Driver";
+    String URL = "jdbc:mysql://localhost:3306/airlinesystem";
+    String root = "root";
+    String password = "System123";
     public AddFlight() {
         initComponents();
+        autoId();
+    }
+    Connection con;
+    PreparedStatement pre;
+    public void db_connection(){
+        try {
+            try {
+                Class.forName(driverClassName);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            con=DriverManager.getConnection(URL,root,password);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void autoId(){
+        try {
+            try {
+                Class.forName(driverClassName);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            con = DriverManager.getConnection(URL,root,password);
+            java.sql.Statement s = con.createStatement();
+            String query = "Select MAX(FlightId) from Flights";
+            ResultSet rs =  s.executeQuery(query);
+            rs.next();
+            String flightId = rs.getString("MAX(FlightId)");
+            if(flightId ==  null){
+                txt_flight_id.setText("FLT001");
+            }else{
+                long id = Long.parseLong(flightId.substring(3, flightId.length()));
+                id++;
+                txt_flight_id.setText("FLT"+String.format("%03d", id));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -257,7 +314,47 @@ public class AddFlight extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txt_departureActionPerformed
 
     private void btn_add_flightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_flightActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            db_connection();
+            String FlightId = txt_flight_id.getText();
+            String FlightName = txt_flight_name.getText();
+            String Arrival = txt_arrival.getText();
+            String Departure = txt_departure.getText();
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            String Date = dt.format(flight_date.getDate());
+            String SeatsLeft = txt_seat_left.getText();
+            String Fare = txt_fare.getText();
+            String TravelTime = txt_time.getText();
+            con=DriverManager.getConnection(URL,root,password);
+            String insert  ="Insert into flights(Flightid,FlightName,Arrival,Departure,Date,SeatLeft,Fare,TravelTime)values(?,?,?,?,?,?,?,?)";
+            pre = con.prepareStatement(insert);
+            pre.setString(1, FlightId);
+            pre.setString(2, FlightName);
+            pre.setString(3, Arrival);
+            pre.setString(4, Departure);
+            pre.setString(5, Date);
+            pre.setString(6, SeatsLeft);
+            pre.setString(7, Fare);
+            pre.setString(8, TravelTime);
+            pre.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Flight Addedd Successfully!");
+            resetFields();
+            autoId();
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+                    } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_add_flightActionPerformed
 
     private void txt_flight_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_flight_idActionPerformed
@@ -308,4 +405,15 @@ public class AddFlight extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txt_seat_left;
     private javax.swing.JTextField txt_time;
     // End of variables declaration//GEN-END:variables
+
+    public void resetFields() {
+        txt_time.setText("");
+        txt_seat_left.setText("");
+        txt_flight_name.setText("");
+        txt_fare.setText("");
+        txt_departure.setText("");
+        txt_arrival.setText("");
+        flight_date.setDate(null);
+        
+    }
 }
