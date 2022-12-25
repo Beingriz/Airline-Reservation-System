@@ -17,7 +17,7 @@ public class NewJFrame extends javax.swing.JFrame {
         initComponents();
         Login login  = new Login();
         login.setVisible(true);
-        DesktopPane.add(login);
+//        DesktopPane.add(login);
     }
 
     /**
@@ -32,7 +32,7 @@ public class NewJFrame extends javax.swing.JFrame {
         DesktopPane = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        addCustomerMenu = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -58,13 +58,13 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jMenu1.setText("Add Customer");
 
-        jMenuItem1.setText("Add Customer");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        addCustomerMenu.setText("Add Customer");
+        addCustomerMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                addCustomerMenuActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        jMenu1.add(addCustomerMenu);
 
         jMenuItem2.setText("Search");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -138,13 +138,17 @@ public class NewJFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void addCustomerMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCustomerMenuActionPerformed
         // TODO add your handling code here:
         AddCustomer newCustomer  = new AddCustomer();
-        newCustomer.setVisible(true);
         
-        DesktopPane.add(newCustomer);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+        if(!newCustomer.isShowing()&& !newCustomer.isVisible()){
+            newCustomer.setVisible(true);
+            DesktopPane.add(newCustomer);
+        }else{
+            addCustomerMenu.setEnabled(false);
+        }
+    }//GEN-LAST:event_addCustomerMenuActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
             // TODO add your handling code here:
@@ -216,11 +220,11 @@ public class NewJFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane DesktopPane;
+    private javax.swing.JMenuItem addCustomerMenu;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
