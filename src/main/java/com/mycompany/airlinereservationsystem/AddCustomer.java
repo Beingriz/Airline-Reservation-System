@@ -53,7 +53,7 @@ public final class AddCustomer extends javax.swing.JInternalFrame {
         String query = "Select Max(CustomerId) from customer";
         ResultSet rs = s.executeQuery(query);
         rs.next();
-        if(rs.getString("MAX(CustomerId)")==null){
+        if(rs.getString("MAX(CustomerIdd)")==null){
             txt_customerid.setText("CS001") ;
         }else{
             String CustId = rs.getString("MAX(CustomerId)");
