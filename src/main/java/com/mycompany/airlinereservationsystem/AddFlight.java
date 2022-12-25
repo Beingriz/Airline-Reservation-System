@@ -4,6 +4,17 @@
  */
 package com.mycompany.airlinereservationsystem;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Md Rizwan
@@ -13,8 +24,54 @@ public class AddFlight extends javax.swing.JInternalFrame {
     /**
      * Creates new form AddFlight
      */
+    String driverClassName ="com.mysql.cj.jdbc.Driver";
+    String URL = "jdbc:mysql://localhost:3306/airlinesystem";
+    String root = "root";
+    String password = "System123";
     public AddFlight() {
         initComponents();
+        autoId();
+    }
+    Connection con;
+    PreparedStatement pre;
+    public void db_connection(){
+        try {
+            try {
+                Class.forName(driverClassName);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            con=DriverManager.getConnection(URL,root,password);
+        } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void autoId(){
+        try {
+            try {
+                Class.forName(driverClassName);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            con = DriverManager.getConnection(URL,root,password);
+            java.sql.Statement s = con.createStatement();
+            String query = "Select MAX(FlightId) from Flights";
+            ResultSet rs =  s.executeQuery(query);
+            rs.next();
+            String flightId = rs.getString("MAX(FlightId)");
+            if(flightId ==  null){
+                txt_flight_id.setText("FLT001");
+            }else{
+                long id = Long.parseLong(flightId.substring(3, flightId.length()));
+                id++;
+                txt_flight_id.setText("FLT"+String.format("%03d", id));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -28,7 +85,6 @@ public class AddFlight extends javax.swing.JInternalFrame {
 
         txt_flight_name = new javax.swing.JTextField();
         lbl_flightDetails = new javax.swing.JLabel();
-        txt_departure = new javax.swing.JTextField();
         btn_add_flight = new javax.swing.JButton();
         lbl_dob2 = new javax.swing.JLabel();
         lbl_dob3 = new javax.swing.JLabel();
@@ -38,7 +94,6 @@ public class AddFlight extends javax.swing.JInternalFrame {
         lbl_dob7 = new javax.swing.JLabel();
         flight_date = new com.toedter.calendar.JDateChooser();
         lbl_dob8 = new javax.swing.JLabel();
-        txt_arrival = new javax.swing.JTextField();
         txt_seat_left = new javax.swing.JTextField();
         lbl_dob9 = new javax.swing.JLabel();
         txt_fare = new javax.swing.JTextField();
@@ -46,6 +101,8 @@ public class AddFlight extends javax.swing.JInternalFrame {
         lbl_dob10 = new javax.swing.JLabel();
         lbl_dob11 = new javax.swing.JLabel();
         btn_cancel = new javax.swing.JButton();
+        cmb_arrival = new javax.swing.JComboBox<>();
+        cmb_departure = new javax.swing.JComboBox<>();
 
         setClosable(true);
         setTitle("Add Flight Panel");
@@ -61,12 +118,6 @@ public class AddFlight extends javax.swing.JInternalFrame {
         lbl_flightDetails.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         lbl_flightDetails.setForeground(new java.awt.Color(255, 0, 0));
         lbl_flightDetails.setText("Flight Details");
-
-        txt_departure.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_departureActionPerformed(evt);
-            }
-        });
 
         btn_add_flight.setText("Add Flight");
         btn_add_flight.addActionListener(new java.awt.event.ActionListener() {
@@ -99,12 +150,6 @@ public class AddFlight extends javax.swing.JInternalFrame {
 
         lbl_dob8.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         lbl_dob8.setText("Arival");
-
-        txt_arrival.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_arrivalActionPerformed(evt);
-            }
-        });
 
         txt_seat_left.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -140,6 +185,15 @@ public class AddFlight extends javax.swing.JInternalFrame {
             }
         });
 
+        cmb_arrival.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delhi", "Goa", "Mumbai", "Bangaloe" }));
+
+        cmb_departure.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delhi", "Goa", "Mumbai", "Bangaloe" }));
+        cmb_departure.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmb_departureActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -160,7 +214,7 @@ public class AddFlight extends javax.swing.JInternalFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lbl_dob8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(txt_arrival))
+                                .addComponent(cmb_arrival, 0, 261, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lbl_dob7, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -168,7 +222,7 @@ public class AddFlight extends javax.swing.JInternalFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(txt_departure, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(cmb_departure, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(96, 96, 96)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
@@ -196,7 +250,7 @@ public class AddFlight extends javax.swing.JInternalFrame {
                         .addComponent(btn_add_flight)
                         .addGap(35, 35, 35)
                         .addComponent(btn_cancel)))
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -215,13 +269,13 @@ public class AddFlight extends javax.swing.JInternalFrame {
                             .addComponent(lbl_dob2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txt_flight_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_arrival, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_dob8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lbl_dob8, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmb_arrival, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_departure, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_dob3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmb_departure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lbl_dob10, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -252,21 +306,53 @@ public class AddFlight extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_flight_nameActionPerformed
 
-    private void txt_departureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_departureActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_departureActionPerformed
-
     private void btn_add_flightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_flightActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            db_connection();
+            String FlightId = txt_flight_id.getText();
+            String FlightName = txt_flight_name.getText();
+            String Arrival = cmb_arrival.getSelectedItem().toString();
+            String Departure = cmb_departure.getSelectedItem().toString();
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            String Date = dt.format(flight_date.getDate());
+            String SeatsLeft = txt_seat_left.getText();
+            String Fare = txt_fare.getText();
+            String TravelTime = txt_time.getText();
+            con=DriverManager.getConnection(URL,root,password);
+            String insert  ="Insert into flights(Flightid,FlightName,Arrival,Departure,Date,SeatLeft,Fare,TravelTime)values(?,?,?,?,?,?,?,?)";
+            pre = con.prepareStatement(insert);
+            pre.setString(1, FlightId);
+            pre.setString(2, FlightName);
+            pre.setString(3, Arrival);
+            pre.setString(4, Departure);
+            pre.setString(5, Date);
+            pre.setString(6, SeatsLeft);
+            pre.setString(7, Fare);
+            pre.setString(8, TravelTime);
+            pre.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Flight Addedd Successfully!");
+            resetFields();
+            autoId();
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+                    } catch (SQLException ex) {
+            Logger.getLogger(AddFlight.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_add_flightActionPerformed
 
     private void txt_flight_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_flight_idActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_flight_idActionPerformed
-
-    private void txt_arrivalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_arrivalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_arrivalActionPerformed
 
     private void txt_seat_leftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_seat_leftActionPerformed
         // TODO add your handling code here:
@@ -285,10 +371,16 @@ public class AddFlight extends javax.swing.JInternalFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btn_cancelActionPerformed
 
+    private void cmb_departureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_departureActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmb_departureActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_add_flight;
     private javax.swing.JButton btn_cancel;
+    private javax.swing.JComboBox<String> cmb_arrival;
+    private javax.swing.JComboBox<String> cmb_departure;
     private com.toedter.calendar.JDateChooser flight_date;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lbl_dob10;
@@ -300,12 +392,20 @@ public class AddFlight extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lbl_dob8;
     private javax.swing.JLabel lbl_dob9;
     private javax.swing.JLabel lbl_flightDetails;
-    private javax.swing.JTextField txt_arrival;
-    private javax.swing.JTextField txt_departure;
     private javax.swing.JTextField txt_fare;
     private javax.swing.JTextField txt_flight_id;
     private javax.swing.JTextField txt_flight_name;
     private javax.swing.JTextField txt_seat_left;
     private javax.swing.JTextField txt_time;
     // End of variables declaration//GEN-END:variables
+
+    public void resetFields() {
+        txt_time.setText("");
+        txt_seat_left.setText("");
+        txt_flight_name.setText("");
+        txt_fare.setText("");
+       
+        flight_date.setDate(null);
+        
+    }
 }

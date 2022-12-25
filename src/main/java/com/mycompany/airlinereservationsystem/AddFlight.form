@@ -45,7 +45,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lbl_dob8" min="-2" pref="82" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="txt_arrival" max="32767" attributes="0"/>
+                              <Component id="cmb_arrival" pref="261" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="lbl_dob7" min="-2" pref="82" max="-2" attributes="0"/>
@@ -55,7 +55,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lbl_dob3" min="-2" pref="82" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="txt_departure" min="-2" pref="261" max="-2" attributes="0"/>
+                              <Component id="cmb_departure" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
@@ -94,7 +94,7 @@
                       <Component id="btn_cancel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="113" max="32767" attributes="0"/>
+              <EmptySpace pref="162" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -117,14 +117,14 @@
                           <Component id="txt_flight_name" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txt_arrival" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbl_dob8" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lbl_dob8" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                          <Component id="cmb_arrival" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txt_departure" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbl_dob3" alignment="1" min="-2" pref="22" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lbl_dob3" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                          <Component id="cmb_departure" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" attributes="0">
@@ -175,11 +175,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Flight Details"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="txt_departure">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_departureActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btn_add_flight">
       <Properties>
@@ -247,11 +242,6 @@
         <Property name="text" type="java.lang.String" value="Arival"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txt_arrival">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_arrivalActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JTextField" name="txt_seat_left">
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_seat_leftActionPerformed"/>
@@ -298,6 +288,39 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_cancelActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="cmb_arrival">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="Delhi"/>
+            <StringItem index="1" value="Goa"/>
+            <StringItem index="2" value="Mumbai"/>
+            <StringItem index="3" value="Bangaloe"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="cmb_departure">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="Delhi"/>
+            <StringItem index="1" value="Goa"/>
+            <StringItem index="2" value="Mumbai"/>
+            <StringItem index="3" value="Bangaloe"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmb_departureActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>
