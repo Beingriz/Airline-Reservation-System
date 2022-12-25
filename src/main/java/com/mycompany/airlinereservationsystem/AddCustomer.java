@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -34,18 +35,18 @@ public final class AddCustomer extends javax.swing.JInternalFrame {
     public void autoId(){
         try{
             try{
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.mysql.cj.jdbc.Driver");
             }catch (ClassNotFoundException ex){
                 Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE,null,ex);
             }
         con = DriverManager.getConnection("jdbc:mysql://localhost:3306/airlinesystem","root","System123" );
         java.sql.Statement s =  con.createStatement();
-        ResultSet rs = s.executeQuery("Select MAX(customerId) from customer");
+        ResultSet rs = s.executeQuery("Select MAX(customerIdd) from customer");
         rs.next();
-        if(rs.getString("MAX(CustomerId)")==null){
+        if(rs.getString("MAX(CustomerIdd)")==null){
             txt_customerid.setText("CS001") ;
         }else{
-            long id = Long.parseLong(rs.getString("MAX(CustomerId)").substring(2, rs.getString("MAX(CustomerId)").length()));
+            long id = Long.parseLong(rs.getString("MAX(CustomerIdd)").substring(2, rs.getString("MAX(CustomerId)").length()));
             id++;
             txt_customerid.setText("CS"+String.format("%03d",id));
         }
@@ -322,39 +323,52 @@ public final class AddCustomer extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btn_cancel1ActionPerformed
 
     private void btn_add_customerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add_customerActionPerformed
-        // TODO add your handling code here
-        String FirstName = txt_fname.getText();
-        String LastName = txt_lname.getText();
-        String PassportNo = txt_passportno.getText();
-        String NicNo = txt_nicid.getText();
-        
-        // Storing Date in SQL Date Type
-        Date Dob = (Date) dob.getDate();
-        DateFormat dt = new SimpleDateFormat("yyyy-MM-dd"); 
-        String dob = dt.format(Dob); // Converting date into string.
-        
-        String PhoneNo = txt_phoneno.getText();
-        String Address = txt_address.getText();
-        String Gender = "";
-        if(rd_male.isSelected()){
-            Gender = "Male";
-        }else{
-            Gender = "Female";
-        }
-        String CustomerId = txt_customerid.getText();
-       
-        //Creating Connectio to the Database.
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
+        try {                                                 
+            // TODO add your handling code here
+            String FirstName = txt_fname.getText();
+            String LastName = txt_lname.getText();
+            String PassportNo = txt_passportno.getText();
+            String NicNo = txt_nicid.getText();
+            
+           
+            DateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
+            String Dob = dt.format(dob.getDate()); // Converting date into string.
+            
+            String PhoneNo = txt_phoneno.getText();
+            String Address = txt_address.getText();
+            String Gender = "";
+            if(rd_male.isSelected()){
+                Gender = "Male";
+            }else{
+                Gender = "Female";
+            }
+            String CustomerId = txt_customerid.getText();
+            
+            //Creating Connectio to the Database.
+            
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/airlinesystem","root","System123" );
+            String insert = "Insert into customer(CustomerIdd,FirstName,LastName,PassportId,Dob,Gender,PhoneNo,Address,NICId) values (?,?,?,?,?,?,?,?,?)";
+            pre =con.prepareStatement(insert); 
+            pre.setString(1, CustomerId);
+            pre.setString(2, FirstName);
+            pre.setString(3, LastName);
+            pre.setString(4, PassportNo);
+            pre.setString(5, Dob);
+            pre.setString(6, Gender); 
+            pre.setString(7, PhoneNo);
+            pre.setString(8, Address);
+            pre.setString(9, NicNo);
+            pre.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Customer Addedd Successfully!");
+           
+        } catch (SQLException ex) {
+            Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/airlinesystem","root","System123" );
-        } catch (SQLException ex) {
-            Logger.getLogger(AddCustomer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        
     }//GEN-LAST:event_btn_add_customerActionPerformed
 
 
