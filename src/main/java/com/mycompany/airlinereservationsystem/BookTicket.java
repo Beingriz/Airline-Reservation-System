@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -31,6 +32,7 @@ public class BookTicket extends javax.swing.JInternalFrame {
     String password = "System123";
     public BookTicket() {
         initComponents();
+        lbl_search_result.setVisible(false);
     }
     Connection con;
     PreparedStatement pre;
@@ -81,6 +83,9 @@ public class BookTicket extends javax.swing.JInternalFrame {
         no_of_ticekts = new javax.swing.JSpinner();
         btn_cancel = new javax.swing.JButton();
         btn_bookticket = new javax.swing.JButton();
+        lbl_search_result = new javax.swing.JLabel();
+        lbl_phoneno3 = new javax.swing.JLabel();
+        txt_total = new javax.swing.JTextField();
 
         setClosable(true);
         setMaximizable(true);
@@ -145,6 +150,11 @@ public class BookTicket extends javax.swing.JInternalFrame {
                 "Flight ID", "Flight Name", "Arrival", "Departure", "Date"
             }
         ));
+        flightTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                flightTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(flightTable);
 
         lbl_fname.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -168,6 +178,12 @@ public class BookTicket extends javax.swing.JInternalFrame {
         lbl_phoneno2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lbl_phoneno2.setText("No of Ticekts");
 
+        no_of_ticekts.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                no_of_ticektsStateChanged(evt);
+            }
+        });
+
         btn_cancel.setText("Cancel");
         btn_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -181,6 +197,12 @@ public class BookTicket extends javax.swing.JInternalFrame {
                 btn_bookticketActionPerformed(evt);
             }
         });
+
+        lbl_search_result.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_search_result.setText("Search Found");
+
+        lbl_phoneno3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lbl_phoneno3.setText("Total Fare");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -209,7 +231,9 @@ public class BookTicket extends javax.swing.JInternalFrame {
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(145, 145, 145)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbl_search_result, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(42, 42, 42)
@@ -235,16 +259,22 @@ public class BookTicket extends javax.swing.JInternalFrame {
                                                     .addComponent(lbl_phoneno2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                     .addComponent(no_of_ticekts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(0, 63, Short.MAX_VALUE))
+                                                    .addGap(0, 0, Short.MAX_VALUE))
                                                 .addComponent(txt_fname))
                                             .addGap(65, 65, 65))
                                         .addGroup(layout.createSequentialGroup()
-                                            .addComponent(lbl_custid)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(txt_customer_id, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(btn_search, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(56, 56, 56)))))
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(lbl_custid)
+                                                    .addGap(18, 18, 18)
+                                                    .addComponent(txt_customer_id, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                    .addComponent(btn_search, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(lbl_phoneno3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(33, 33, 33)
+                                                    .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(144, 144, 144)
                                 .addComponent(btn_bookticket)
@@ -262,21 +292,6 @@ public class BookTicket extends javax.swing.JInternalFrame {
                     .addComponent(lbl_flightDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(lbl_dob2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(9, 9, 9)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cmb_arrival, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cmb_departure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_search_flight))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,11 +318,33 @@ public class BookTicket extends javax.swing.JInternalFrame {
                             .addComponent(txt_fare, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbl_phoneno2)
                             .addComponent(no_of_ticekts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(48, 48, 48)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_phoneno3)
+                            .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_cancel)
-                            .addComponent(btn_bookticket))))
-                .addContainerGap(202, Short.MAX_VALUE))
+                            .addComponent(btn_bookticket))
+                        .addContainerGap(47, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(lbl_dob2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmb_arrival, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmb_departure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_search_flight))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lbl_search_result)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33))))
         );
 
         pack();
@@ -318,7 +355,25 @@ public class BookTicket extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txt_customer_idActionPerformed
 
     private void btn_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_searchActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            db_connection();
+            String CustomerId = txt_customer_id.getText();
+            String query = "Select * from customer where CustomerId=?";
+            pre = con.prepareStatement(query);
+            pre.setString(1, CustomerId);
+            ResultSet rs = pre.executeQuery();
+            if(rs.next()){
+                txt_fname.setText(rs.getString("FirstName"));
+                txt_lname.setText(rs.getString("LastName"));
+                txt_phoneno.setText(rs.getString("PhoneNo"));
+            }else{
+                JOptionPane.showMessageDialog(null, "No Customer Available for this "+ CustomerId);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_searchActionPerformed
 
     private void btn_search_flightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_search_flightActionPerformed
@@ -327,29 +382,30 @@ public class BookTicket extends javax.swing.JInternalFrame {
              String Arrival = cmb_arrival.getSelectedItem().toString();
              String Departure  =cmb_departure.getSelectedItem().toString();
              db_connection();
-             String query ="Select * from flight where Arrival=? and Departure=?";
+             String query ="Select * from flights where Arrival=? and Departure=?";
              pre = con.prepareStatement(query);
              pre.setString(1, Arrival);
              pre.setString(2, Departure);
              ResultSet rs = pre.executeQuery();
              ResultSetMetaData records = rs.getMetaData();
              int count = records.getColumnCount();
-             DefaultTableModel dft = (DefaultTableModel)flightTable.getModel();
-             dft.setRowCount(0);
-             while(rs.next()){
-                Vector v = new Vector();
-                for(int i=1; i<count; i++){
-                    v.add(rs.getString("FlightId"));
-                    v.add(rs.getString("FlightName"));
-                    v.add(rs.getString("Arrival"));
-                    v.add(rs.getString("Departure"));
-                    v.add(rs.getString("Arrival"));
-                             
-                }
-                dft.addRow(v);
-             }
-         
-         
+            
+            DefaultTableModel dft = (DefaultTableModel)flightTable.getModel();
+            dft.setRowCount(0);
+            while(rs.next()){
+               Vector v = new Vector();
+               for(int i=1; i<count; i++){
+                   v.add(rs.getString("FlightId"));
+                   v.add(rs.getString("FlightName"));
+                   v.add(rs.getString("Arrival"));
+                   v.add(rs.getString("Departure"));
+                   v.add(rs.getString("Arrival"));
+
+               }
+               dft.addRow(v);
+            }
+            
+             
          
          
          
@@ -369,8 +425,91 @@ public class BookTicket extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void btn_bookticketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bookticketActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            db_connection();
+            String CustomerId = txt_customer_id.getText();
+            String FirstName  =txt_fname.getText();
+            String LastName = txt_lname.getText();
+            String PhoneNo = txt_phoneno.getText();
+            int col = 0;
+            int row = flightTable.getSelectedRow();
+            String FlightId = flightTable.getModel().getValueAt(row, col).toString();
+            String fetch_flightDetails = "Select  from flights where FightId=?";
+            pre = con.prepareStatement(fetch_flightDetails);
+            pre.setString(1, FlightId);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            String FlightName = rs.getString("FlightName");
+            String Arrival  =rs.getString("Arrival");
+            String Departure  = rs.getString("Departure");
+            String Date = rs.getString("Date");               
+            
+            int Fare = Integer.parseInt(txt_fare.getText());
+            int Seats = Integer.parseInt(no_of_ticekts.getValue().toString());
+            int Total  =Integer.parseInt(txt_total.getText());
+            String insert_ticket = "Insert into tickets(TicketId,CustomerId,FirstName,LastName,PhoneNo,FlightId,FlightName,Arrival,Departure,Date,Fare,Seats,TotalFare)values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            pre = con.prepareStatement(insert_ticket);
+            pre.setString(1, TicketId);
+            pre.setString(2,CustomerId);
+            pre.setString(3, FirstName);
+            pre.setString(4,LastName);
+            pre.setString(5, PhoneNo);
+            pre.setString(6,FlightId);
+            pre.setString(7, FlightName);
+            pre.setString(8,Arrival);
+            pre.setString(9, Departure);
+            pre.setString(10,Date);
+            pre.setInt(11, Fare);
+            pre.setInt(12,Seats);
+            pre.setInt(13, Total);
+            
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
     }//GEN-LAST:event_btn_bookticketActionPerformed
+
+    private void flightTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_flightTableMouseClicked
+        try {
+            // TODO add your handling code here:
+            db_connection();
+            java.sql.Statement s = con.createStatement();
+            int col = 0;
+            int row = flightTable.getSelectedRow();
+            String id = flightTable.getModel().getValueAt(row, col).toString();
+            String query = "Select * from flights where FlightId=?";
+            pre = con.prepareStatement(query);
+            pre.setString(1, id);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            txt_fare.setText(rs.getString("Fare"));
+        
+        
+        
+        
+        
+        
+        
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_flightTableMouseClicked
+
+    private void no_of_ticektsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_no_of_ticektsStateChanged
+        // TODO add your handling code here:
+        int seats = Integer.parseInt(no_of_ticekts.getValue().toString());
+        int fare =  Integer.parseInt(txt_fare.getText());
+        int total = fare*seats;
+        String value = String.valueOf(total);
+        txt_total.setText(value);
+    }//GEN-LAST:event_no_of_ticektsStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -393,11 +532,14 @@ public class BookTicket extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lbl_phoneno;
     private javax.swing.JLabel lbl_phoneno1;
     private javax.swing.JLabel lbl_phoneno2;
+    private javax.swing.JLabel lbl_phoneno3;
+    private javax.swing.JLabel lbl_search_result;
     private javax.swing.JSpinner no_of_ticekts;
     private javax.swing.JTextField txt_customer_id;
     private javax.swing.JTextField txt_fare;
     private javax.swing.JTextField txt_fname;
     private javax.swing.JTextField txt_lname;
     private javax.swing.JTextField txt_phoneno;
+    private javax.swing.JTextField txt_total;
     // End of variables declaration//GEN-END:variables
 }
