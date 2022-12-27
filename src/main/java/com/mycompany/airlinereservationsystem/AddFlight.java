@@ -185,9 +185,9 @@ public class AddFlight extends javax.swing.JInternalFrame {
             }
         });
 
-        cmb_arrival.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delhi", "Goa", "Mumbai", "Bangaloe" }));
+        cmb_arrival.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "---Select---", "Delhi", "Goa", "Mumbai", "Bangaloe", "Hyderabad", "Chennai", "Bidar", "Bagdogra", "Gurgaon", "Nasik", "Shirnagar", "Kashmir" }));
 
-        cmb_departure.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delhi", "Goa", "Mumbai", "Bangaloe" }));
+        cmb_departure.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "---Select---", "Delhi", "Goa", "Mumbai", "Bangaloe", "Hyderabad", "Chennai", "Bidar", "Bagdogra", "Gurgaon", "Nasik", "Shirnagar", "Kashmir" }));
         cmb_departure.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmb_departureActionPerformed(evt);

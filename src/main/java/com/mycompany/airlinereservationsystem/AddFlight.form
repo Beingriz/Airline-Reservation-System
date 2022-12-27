@@ -292,11 +292,20 @@
     <Component class="javax.swing.JComboBox" name="cmb_arrival">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Delhi"/>
-            <StringItem index="1" value="Goa"/>
-            <StringItem index="2" value="Mumbai"/>
-            <StringItem index="3" value="Bangaloe"/>
+          <StringArray count="13">
+            <StringItem index="0" value="---Select---"/>
+            <StringItem index="1" value="Delhi"/>
+            <StringItem index="2" value="Goa"/>
+            <StringItem index="3" value="Mumbai"/>
+            <StringItem index="4" value="Bangaloe"/>
+            <StringItem index="5" value="Hyderabad"/>
+            <StringItem index="6" value="Chennai"/>
+            <StringItem index="7" value="Bidar"/>
+            <StringItem index="8" value="Bagdogra"/>
+            <StringItem index="9" value="Gurgaon"/>
+            <StringItem index="10" value="Nasik"/>
+            <StringItem index="11" value="Shirnagar"/>
+            <StringItem index="12" value="Kashmir"/>
           </StringArray>
         </Property>
       </Properties>
@@ -307,11 +316,20 @@
     <Component class="javax.swing.JComboBox" name="cmb_departure">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Delhi"/>
-            <StringItem index="1" value="Goa"/>
-            <StringItem index="2" value="Mumbai"/>
-            <StringItem index="3" value="Bangaloe"/>
+          <StringArray count="13">
+            <StringItem index="0" value="---Select---"/>
+            <StringItem index="1" value="Delhi"/>
+            <StringItem index="2" value="Goa"/>
+            <StringItem index="3" value="Mumbai"/>
+            <StringItem index="4" value="Bangaloe"/>
+            <StringItem index="5" value="Hyderabad"/>
+            <StringItem index="6" value="Chennai"/>
+            <StringItem index="7" value="Bidar"/>
+            <StringItem index="8" value="Bagdogra"/>
+            <StringItem index="9" value="Gurgaon"/>
+            <StringItem index="10" value="Nasik"/>
+            <StringItem index="11" value="Shirnagar"/>
+            <StringItem index="12" value="Kashmir"/>
           </StringArray>
         </Property>
       </Properties>
