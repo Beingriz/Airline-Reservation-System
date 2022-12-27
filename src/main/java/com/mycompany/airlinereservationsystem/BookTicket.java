@@ -13,7 +13,10 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -317,7 +320,7 @@ public class BookTicket extends javax.swing.JInternalFrame {
                                         .addComponent(lbl_phoneno4, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(lbl_seatleft, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(0, 72, Short.MAX_VALUE))))
+                        .addGap(0, 95, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -400,7 +403,7 @@ public class BookTicket extends javax.swing.JInternalFrame {
                     .addComponent(btn_bookticket)
                     .addComponent(btn_cancel)
                     .addComponent(btn_cancel1))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
 
         pack();
@@ -522,7 +525,15 @@ public class BookTicket extends javax.swing.JInternalFrame {
             pre.setInt(12,Seats);
             pre.setInt(13, Total);
             pre.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Congratulations!. Ticket Booked");
+            
+            // Updating Available Seats.
+            int seatsLeft = Integer.parseInt(lbl_seatleft.getText());
+            String updateSeats = "Update flights set SeatLeft=? where FlightId=?";
+            pre = con.prepareStatement(updateSeats);
+            pre.setInt(1, seatsLeft);
+            pre.setString(2, FlightId);
+            pre.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Hey!   "+FirstName +" " +LastName+"   "+Seats +" Ticket Booked Successfully!");
             resetFields();
             autoId();
             
@@ -548,13 +559,9 @@ public class BookTicket extends javax.swing.JInternalFrame {
             pre.setString(1, id);
             ResultSet rs = pre.executeQuery();
             rs.next();
-            txt_fare.setText(rs.getString("Fare"));
-        
-        
-        
-        
-        
-        
+            txt_fare.setText(rs.getString("Fare"));    
+            int seatsLeft = rs.getInt("SeatLeft");
+            lbl_seatleft.setText(String.valueOf(seatsLeft));
         
         
         } catch (SQLException ex) {
@@ -564,12 +571,44 @@ public class BookTicket extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_flightTableMouseClicked
 
     private void no_of_ticektsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_no_of_ticektsStateChanged
-        // TODO add your handling code here:
-        int seats = Integer.parseInt(no_of_ticekts.getValue().toString());
-        int fare =  Integer.parseInt(txt_fare.getText());
-        int total = fare*seats;
-        String value = String.valueOf(total);
-        txt_total.setText(value);
+        try {
+            // TODO add your handling code here:
+            int seats = Integer.parseInt(no_of_ticekts.getValue().toString());
+            int fare =  Integer.parseInt(txt_fare.getText());
+            int total = fare*seats;
+            String value = String.valueOf(total);
+            txt_total.setText(value);
+            
+            // Getiing flight Id
+            int col = 0;
+            int row = flightTable.getSelectedRow();
+            String FlightId  = flightTable.getModel().getValueAt(row, col).toString();
+            String getSeats = "Select * from flights where FlightId=?";
+            pre = con.prepareStatement(getSeats);
+            pre.setString(1, FlightId);
+            ResultSet rs = pre.executeQuery();
+            rs.next();
+            int seatsLeft = rs.getInt("SeatLeft");
+            int balanceSeats = 0;
+            if(seats < seatsLeft || seats > 0){
+                balanceSeats = seatsLeft-seats;
+            }
+            if(seats > seatsLeft){       
+                JOptionPane.showMessageDialog(null, "You cannot book more than Available Seats of " + seatsLeft);
+                no_of_ticekts.setValue(seatsLeft);
+            }else if(seats <= -1){
+                JOptionPane.showMessageDialog(null, "You cannot go below 0 seats");
+                no_of_ticekts.setValue(0);
+            }else{
+                lbl_seatleft.setText(String.valueOf(balanceSeats));
+            }
+           
+            
+        
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_no_of_ticektsStateChanged
 
     private void txt_ticket_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ticket_idActionPerformed
@@ -627,9 +666,9 @@ public class BookTicket extends javax.swing.JInternalFrame {
         DefaultTableModel table = (DefaultTableModel) flightTable.getModel();
         table.setRowCount(0);
         cmb_arrival.setSelectedItem("---Select---");
-        cmb_departure.setSelectedItem("---Select---");
-        no_of_ticekts.setValue(-1);
-        
+        cmb_departure.setSelectedItem("---Select---");   
+        lbl_seatleft.setText("0");
+       
     }
     
 }
