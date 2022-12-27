@@ -32,7 +32,7 @@ public class BookTicket extends javax.swing.JInternalFrame {
     String password = "System123";
     public BookTicket() {
         initComponents();
-        lbl_search_result.setVisible(false);
+        autoId();
     }
     Connection con;
     PreparedStatement pre;
@@ -49,6 +49,28 @@ public class BookTicket extends javax.swing.JInternalFrame {
         }
         
     }
+     public void autoId(){
+        try {
+            db_connection();
+            java.sql.Statement s  =con.createStatement();
+            String getId = "Select MAX(Ticket_Id) from tickets";
+            ResultSet rs = s.executeQuery(getId);
+            rs.next();
+            String Id = rs.getString("MAX(Ticket_Id)");
+            if(Id ==  null){
+                txt_ticket_id.setText("TCK001");
+            }else{
+                long id = Long.parseLong(Id.substring(3,Id.length()));
+                id++;
+                txt_ticket_id.setText("TCK"+String.format("%03d", id));
+            }
+        
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(BookTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         
+     }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -65,7 +87,6 @@ public class BookTicket extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         lbl_dob2 = new javax.swing.JLabel();
         lbl_dob3 = new javax.swing.JLabel();
-        lbl_flightDetails = new javax.swing.JLabel();
         btn_search_flight = new javax.swing.JButton();
         cmb_arrival = new javax.swing.JComboBox<>();
         cmb_departure = new javax.swing.JComboBox<>();
@@ -83,9 +104,14 @@ public class BookTicket extends javax.swing.JInternalFrame {
         no_of_ticekts = new javax.swing.JSpinner();
         btn_cancel = new javax.swing.JButton();
         btn_bookticket = new javax.swing.JButton();
-        lbl_search_result = new javax.swing.JLabel();
         lbl_phoneno3 = new javax.swing.JLabel();
         txt_total = new javax.swing.JTextField();
+        txt_ticket_id = new javax.swing.JTextField();
+        lbl_custid1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        btn_cancel1 = new javax.swing.JButton();
+        lbl_phoneno4 = new javax.swing.JLabel();
+        lbl_seatleft = new javax.swing.JLabel();
 
         setClosable(true);
         setMaximizable(true);
@@ -93,9 +119,9 @@ public class BookTicket extends javax.swing.JInternalFrame {
         setTitle("Booking Panel");
         setPreferredSize(new java.awt.Dimension(850, 500));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel1.setText("Search Flight");
+        jLabel1.setFont(new java.awt.Font("SimSun", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 153));
+        jLabel1.setText("Customer Details");
 
         lbl_custid.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lbl_custid.setText("Customer ID ");
@@ -115,18 +141,14 @@ public class BookTicket extends javax.swing.JInternalFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel2.setText("Welcome to Booking Panel");
+        jLabel2.setForeground(new java.awt.Color(0, 153, 0));
+        jLabel2.setText("Flight Booking Panel");
 
         lbl_dob2.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         lbl_dob2.setText("Arrival");
 
         lbl_dob3.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         lbl_dob3.setText("Departure");
-
-        lbl_flightDetails.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
-        lbl_flightDetails.setForeground(new java.awt.Color(255, 0, 0));
-        lbl_flightDetails.setText("Customer");
 
         btn_search_flight.setText("Search Flight");
         btn_search_flight.addActionListener(new java.awt.event.ActionListener() {
@@ -135,9 +157,9 @@ public class BookTicket extends javax.swing.JInternalFrame {
             }
         });
 
-        cmb_arrival.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delhi", "Goa", "Mumbai", "Bangaloe" }));
+        cmb_arrival.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "---Select---", "Delhi", "Goa", "Mumbai", "Bangaloe", "Hyderabad", "Chennai", "Bidar", "Bagdogra", "Gurgaon", "Nasik", "Shirnagar", "Kashmir" }));
 
-        cmb_departure.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delhi", "Goa", "Mumbai", "Bangaloe" }));
+        cmb_departure.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "---Select---", "Delhi", "Goa", "Mumbai", "Bangaloe", "Hyderabad", "Chennai", "Bidar", "Bagdogra", "Gurgaon", "Nasik", "Shirnagar", "Kashmir" }));
 
         flightTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -198,102 +220,137 @@ public class BookTicket extends javax.swing.JInternalFrame {
             }
         });
 
-        lbl_search_result.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lbl_search_result.setText("Search Found");
-
         lbl_phoneno3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lbl_phoneno3.setText("Total Fare");
+
+        txt_ticket_id.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txt_ticket_id.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_ticket_idActionPerformed(evt);
+            }
+        });
+
+        lbl_custid1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lbl_custid1.setText("Ticekt ID");
+
+        jLabel3.setFont(new java.awt.Font("SimSun", 1, 24)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 153, 255));
+        jLabel3.setText("Search Flight");
+
+        btn_cancel1.setText("Reset");
+        btn_cancel1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancel1ActionPerformed(evt);
+            }
+        });
+
+        lbl_phoneno4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lbl_phoneno4.setText("Seat Left");
+
+        lbl_seatleft.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lbl_seatleft.setText("0");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(155, 155, 155)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(121, 121, 121))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(239, 239, 239)
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmb_arrival, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(lbl_dob2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(51, 51, 51)
+                                .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(cmb_departure, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_search_flight))))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(82, 82, 82)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lbl_phoneno3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbl_dob2, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cmb_arrival, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(73, 73, 73)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(cmb_departure, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btn_search_flight))))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(145, 145, 145)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lbl_search_result, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(42, 42, 42)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(lbl_flightDetails)
-                                        .addGap(231, 231, 231))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(lbl_phoneno, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                    .addComponent(lbl_fname, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(labl_lname, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addComponent(lbl_phoneno1))
-                                            .addGap(23, 23, 23)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(txt_phoneno)
-                                                .addComponent(txt_lname)
-                                                .addGroup(layout.createSequentialGroup()
-                                                    .addComponent(txt_fare, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(lbl_phoneno2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(no_of_ticekts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(0, 0, Short.MAX_VALUE))
-                                                .addComponent(txt_fname))
-                                            .addGap(65, 65, 65))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(layout.createSequentialGroup()
-                                                    .addComponent(lbl_custid)
-                                                    .addGap(18, 18, 18)
-                                                    .addComponent(txt_customer_id, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                    .addComponent(btn_search, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGroup(layout.createSequentialGroup()
-                                                    .addComponent(lbl_phoneno3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGap(33, 33, 33)
-                                                    .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(144, 144, 144)
-                                .addComponent(btn_bookticket)
+                                .addComponent(lbl_custid)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))))
+                                .addComponent(txt_customer_id, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btn_search, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lbl_phoneno, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(lbl_fname, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(labl_lname, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lbl_phoneno1))
+                                .addGap(23, 23, 23)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txt_phoneno)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(txt_fare, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(lbl_phoneno2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(no_of_ticekts, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txt_lname, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(txt_fname, javax.swing.GroupLayout.Alignment.TRAILING))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(lbl_phoneno4, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lbl_seatleft, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(0, 72, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(193, 193, 193)
+                        .addComponent(lbl_custid1)
+                        .addGap(26, 26, 26)
+                        .addComponent(txt_ticket_id, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(335, 335, 335)
+                        .addComponent(jLabel2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_bookticket)
+                .addGap(18, 18, 18)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_cancel1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(322, 322, 322))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lbl_flightDetails, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_ticket_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_custid1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(38, 38, 38)
@@ -321,30 +378,29 @@ public class BookTicket extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lbl_phoneno3)
-                            .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(8, 8, 8)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btn_cancel)
-                            .addComponent(btn_bookticket))
-                        .addContainerGap(47, Short.MAX_VALUE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lbl_phoneno4)
+                                .addComponent(lbl_seatleft))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(lbl_dob2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lbl_dob3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbl_dob2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(9, 9, 9)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cmb_arrival, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cmb_departure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btn_search_flight))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lbl_search_result)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(33, 33, 33))))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_bookticket)
+                    .addComponent(btn_cancel)
+                    .addComponent(btn_cancel1))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         pack();
@@ -422,12 +478,14 @@ public class BookTicket extends javax.swing.JInternalFrame {
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
         // TODO add your handling code here:
+        this.setVisible(false);
     }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void btn_bookticketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bookticketActionPerformed
         try {
             // TODO add your handling code here:
             db_connection();
+            String TicketId = txt_ticket_id.getText();
             String CustomerId = txt_customer_id.getText();
             String FirstName  =txt_fname.getText();
             String LastName = txt_lname.getText();
@@ -435,7 +493,7 @@ public class BookTicket extends javax.swing.JInternalFrame {
             int col = 0;
             int row = flightTable.getSelectedRow();
             String FlightId = flightTable.getModel().getValueAt(row, col).toString();
-            String fetch_flightDetails = "Select  from flights where FightId=?";
+            String fetch_flightDetails = "Select * from flights where FlightId=?";
             pre = con.prepareStatement(fetch_flightDetails);
             pre.setString(1, FlightId);
             ResultSet rs = pre.executeQuery();
@@ -448,7 +506,7 @@ public class BookTicket extends javax.swing.JInternalFrame {
             int Fare = Integer.parseInt(txt_fare.getText());
             int Seats = Integer.parseInt(no_of_ticekts.getValue().toString());
             int Total  =Integer.parseInt(txt_total.getText());
-            String insert_ticket = "Insert into tickets(TicketId,CustomerId,FirstName,LastName,PhoneNo,FlightId,FlightName,Arrival,Departure,Date,Fare,Seats,TotalFare)values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String insert_ticket = "Insert into tickets(Ticket_Id,CustomerId,FirstName,LastName,PhoneNo,FlightId,FlightName,Arrival,Departure,Date,Fare,Seats,TotalFare)values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
             pre = con.prepareStatement(insert_ticket);
             pre.setString(1, TicketId);
             pre.setString(2,CustomerId);
@@ -463,7 +521,10 @@ public class BookTicket extends javax.swing.JInternalFrame {
             pre.setInt(11, Fare);
             pre.setInt(12,Seats);
             pre.setInt(13, Total);
-            
+            pre.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Congratulations!. Ticket Booked");
+            resetFields();
+            autoId();
             
             
         } catch (SQLException ex) {
@@ -511,10 +572,20 @@ public class BookTicket extends javax.swing.JInternalFrame {
         txt_total.setText(value);
     }//GEN-LAST:event_no_of_ticektsStateChanged
 
+    private void txt_ticket_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ticket_idActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_ticket_idActionPerformed
+
+    private void btn_cancel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancel1ActionPerformed
+        // TODO add your handling code here:
+        resetFields();
+    }//GEN-LAST:event_btn_cancel1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_bookticket;
     private javax.swing.JButton btn_cancel;
+    private javax.swing.JButton btn_cancel1;
     private javax.swing.JButton btn_search;
     private javax.swing.JButton btn_search_flight;
     private javax.swing.JComboBox<String> cmb_arrival;
@@ -522,24 +593,43 @@ public class BookTicket extends javax.swing.JInternalFrame {
     private javax.swing.JTable flightTable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel labl_lname;
     private javax.swing.JLabel lbl_custid;
+    private javax.swing.JLabel lbl_custid1;
     private javax.swing.JLabel lbl_dob2;
     private javax.swing.JLabel lbl_dob3;
-    private javax.swing.JLabel lbl_flightDetails;
     private javax.swing.JLabel lbl_fname;
     private javax.swing.JLabel lbl_phoneno;
     private javax.swing.JLabel lbl_phoneno1;
     private javax.swing.JLabel lbl_phoneno2;
     private javax.swing.JLabel lbl_phoneno3;
-    private javax.swing.JLabel lbl_search_result;
+    private javax.swing.JLabel lbl_phoneno4;
+    private javax.swing.JLabel lbl_seatleft;
     private javax.swing.JSpinner no_of_ticekts;
     private javax.swing.JTextField txt_customer_id;
     private javax.swing.JTextField txt_fare;
     private javax.swing.JTextField txt_fname;
     private javax.swing.JTextField txt_lname;
     private javax.swing.JTextField txt_phoneno;
+    private javax.swing.JTextField txt_ticket_id;
     private javax.swing.JTextField txt_total;
     // End of variables declaration//GEN-END:variables
+
+    public void resetFields() {
+        txt_total.setText("");
+        txt_phoneno.setText("");
+        txt_lname.setText("");
+        txt_fname.setText("");
+        txt_fare.setText("");
+        txt_customer_id.setText("");
+        DefaultTableModel table = (DefaultTableModel) flightTable.getModel();
+        table.setRowCount(0);
+        cmb_arrival.setSelectedItem("---Select---");
+        cmb_departure.setSelectedItem("---Select---");
+        no_of_ticekts.setValue(-1);
+        
+    }
+    
 }
