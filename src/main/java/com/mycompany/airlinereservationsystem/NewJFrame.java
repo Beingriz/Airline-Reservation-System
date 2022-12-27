@@ -4,6 +4,8 @@
  */
 package com.mycompany.airlinereservationsystem;
 
+import javax.swing.JInternalFrame;
+
 /**
  *
  * @author Md Rizwan
@@ -141,6 +143,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void addCustomerMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCustomerMenuActionPerformed
         // TODO add your handling code here:
+        checkFrameVisible();
         AddCustomer newCustomer  = new AddCustomer();
         
         if(!newCustomer.isShowing()&& !newCustomer.isVisible()){
@@ -153,6 +156,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
             // TODO add your handling code here:
+            checkFrameVisible();
             BookTicket bookingpanel = new BookTicket();
             bookingpanel.setVisible(true);
             DesktopPane.add(bookingpanel);
@@ -172,6 +176,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
+        checkFrameVisible();
         AddFlight addFlight = new AddFlight();
         addFlight.setVisible(true);
         DesktopPane.add(addFlight);
@@ -224,6 +229,14 @@ public class NewJFrame extends javax.swing.JFrame {
                 new NewJFrame().setVisible(true);
             }
         });
+    }
+    public void checkFrameVisible(){
+        JInternalFrame[] frame = DesktopPane.getAllFrames();
+        for(JInternalFrame f : frame){
+            if(f.isVisible()){
+                f.setVisible(false);
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
